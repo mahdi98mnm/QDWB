@@ -1,6 +1,8 @@
 
 from typing import List, Dict, Tuple, Set, Optional, Union, Any, NoReturn
 import math
+import datetime
+from calendar import monthrange
 
 
 def convert_celsius2kelvin(
@@ -121,3 +123,65 @@ def convert_radiation2evaporation(
     """
     
     return radiation * 0.408
+
+
+
+def degree_minute_second_to_decimal_degree(
+    degree : int,
+    minute : int,
+    second : int
+    ) -> float:
+ 
+    """
+    Description
+    -----------
+    Convert degree_minute_second to decimal degree 
+    ----------
+    Latitude:
+    degree : int
+        degree in degree - Positive for the Northern Hemisphere and negative for the Southern Hemisphere
+    minute : int
+        minute in minute - Positive
+    second : int
+        second in second - Positive
+
+   
+    Returns
+    -------
+    decimal_degree : float
+        decimal degree in degree
+    """
+    if degree < 0 :
+        dd = -(abs(degree) + float(minute) / 60 + float(second) / 3600)
+    else:
+        dd = degree + float(minute) / 60 + float(second) / 3600
+
+    return dd
+
+
+
+def standard_date_to_Julian_day (
+    standard_date : str
+    ) -> int:
+       
+    """
+    Description
+    -----------
+    calculate Julian Day with standard date
+    Ref:https://rafatieppo.github.io/post/2018_12_01_juliandate/
+    ----------
+    standard_date : str
+        Date with the specified standard
+
+    Returns
+    -------
+    Julian Day : int
+        Number of days of the year taking into account the leap year
+    """
+        
+    fmt='%Y-%m-%d'
+    sdtdate = datetime.datetime.strptime(standard_date, fmt)
+    sdtdate = sdtdate.timetuple()
+    jdate = sdtdate.tm_yday
+
+    return(jdate)
