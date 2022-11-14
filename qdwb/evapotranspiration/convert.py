@@ -161,7 +161,7 @@ def degree_minute_second_to_decimal_degree(
 
 
 def standard_date_to_Julian_day (
-    standard_date : str
+    standard_date_in_gregorian : str
     ) -> int:
        
     """
@@ -170,7 +170,8 @@ def standard_date_to_Julian_day (
     calculate Julian Day with standard date
     Ref:https://rafatieppo.github.io/post/2018_12_01_juliandate/
     ----------
-    standard_date : str
+
+    standard_date_in_gregorian : str
         Date with the specified standard
 
     Returns
@@ -180,7 +181,7 @@ def standard_date_to_Julian_day (
     """
         
     fmt='%Y-%m-%d'
-    sdtdate = datetime.datetime.strptime(standard_date, fmt)
+    sdtdate = datetime.datetime.strptime(standard_date_in_gregorian, fmt)
     sdtdate = sdtdate.timetuple()
     jdate = sdtdate.tm_yday
 

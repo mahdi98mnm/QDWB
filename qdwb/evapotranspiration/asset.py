@@ -2,7 +2,8 @@ from typing import List, Dict, Tuple, Set, Optional, Union, Any, NoReturn
 import math
 import datetime
 from calendar import monthrange
-
+from check import *
+from global_variable import *
 
 def mean_temperature_max_min(
     tmax : float,
@@ -119,8 +120,8 @@ def inverse_relative_distance_earth_sun(
    
     Returns
     -------
-    Inverse Relative Distance Earth Sun : float
-        Inverse Relative Distance Earth Sun in Radian
+    inverse_relative_distance_earth_sun : float
+        inverse relative distance earth sun in Radian
     """
         
     return 1 + (0.033 * math.cos((2 * math.pi * julian_date)/365))
@@ -137,13 +138,13 @@ def solar_declination(
     calculate Solar Declination With Julian Date - eq 24 FAO56
     ----------
 
-    Julian Day : int
+    julian_date : int
         Number of days of the year taking into account the leap year
    
     Returns
     -------
-    Solar Declination : float
-        Solar Declination in Radian
+    solar_declination : float
+        solar_declination in Radian
     """
         
     return 0.409 * math.sin(((2 * math.pi * julian_date) / 365) - 1.39)
@@ -168,8 +169,8 @@ def sunset_hour_angle(
    
     Returns
     -------
-    Sunset Hour Angle : float
-        Sunset Hour Angle in Radian
+    sunset_hour_angle : float
+        sunset hour angle in Radian
     """
         
     return math.acos(-math.tan(latitude) * math.tan(solar_declination))
@@ -240,7 +241,7 @@ def maximum_possible_sunshine_duration_in_a_day(
    
     Returns
     -------
-    maximum possible sunshine duration in a day : float
+    maximum_possible_sunshine_duration_in_a_day : float
         maximum possible sunshine duration in a day in hours
     """
         
@@ -282,23 +283,23 @@ def extraterrestrial_radiation(
     -----------
     calculate Extraterrestrial Radiation - eq 28 FAO56
     ----------
-    Latitude:
-    degree : int
-        degree in degree - Positive for the Northern Hemisphere and negative for the Southern Hemisphere
-    minute : int
-        minute in minute - Positive
-    second : int
-        second in second - Positive
-    stddate : str
-        Date with the specified standard
-   
+
+    inverse_relative_distance_earth_sun : float
+        inverse relative distance earth sun in Radian
+    sunset_hour_angle : float
+        sunset hour angle in Radian
+    latitude: float
+        latitude in Radian
+    solar_declination : float
+        solar_declination in Radian
+
     Returns
     -------
-    Extraterrestrial Radiation : float
-        Extraterrestrial Radiation in MJ/m**2/day
+    extraterrestrial_radiation : float
+            extraterrestrial radiation in MJ/m**2/day
     """
     
-    temp_1 = ((24 * 60 )/ math.pi) * global_variable.SOLAR_CONSTANT * inverse_relative_distance_earth_sun
+    temp_1 = ((24 * 60 )/ math.pi) * SOLAR_CONSTANT * inverse_relative_distance_earth_sun
 
     temp_2 = sunset_hour_angle * math.sin(latitude) * math.sin(solar_declination)
 
@@ -308,7 +309,7 @@ def extraterrestrial_radiation(
 
 
 
-class Solar_or_shortwave_radiation  :
+class SolarOrShortwaveRadiation  :
    
     # init method or constructor 
     def __init__(self,
@@ -334,6 +335,7 @@ class Solar_or_shortwave_radiation  :
         extraterrestrial_radiation : float,
         mode_data : str,
         maximum_possible_sunshine_duration_in_a_day : float,
+        standard_date_in_gregorian : str,
         Actual_duration_of_sunshine_in_a_day : float = None, 
         Monthly_average_sunshine_duration : float = None
     )-> float:
@@ -350,6 +352,8 @@ class Solar_or_shortwave_radiation  :
             monthly or daily
         maximum_possible_sunshine_duration_in_a_day : float
             maximum possible sunshine duration in a day in hours
+        standard_date_in_gregorian : str
+            Date with the specified standard
         Actual_duration_of_sunshine_in_a_day : float
             Actual duration of sunshine in a day in hour
         Monthly_average_sunshine_duration : float
@@ -366,7 +370,7 @@ class Solar_or_shortwave_radiation  :
                 Monthly_average_sunshine_duration = Monthly_average_sunshine_duration
 
             elif Monthly_average_sunshine_duration == None:
-                Monthly_average_sunshine_duration = Actual_duration_of_sunshine_in_a_day / Number_of_days_in_month.number_of_days_in_month(stddate)
+                Monthly_average_sunshine_duration = Actual_duration_of_sunshine_in_a_day / number_of_days_in_month(standard_date_in_gregorian = standard_date_in_gregorian)
             
         elif mode_data == 'daily':
             Monthly_average_sunshine_duration = Actual_duration_of_sunshine_in_a_day
@@ -411,7 +415,7 @@ class Solar_or_shortwave_radiation  :
         temp_1 = extraterrestrial_radiation
 
 
-        return Adjustment_coefficient_or_K_RS * math.sqrt(T_max - T_min) * temp_1
+        return Adjustment_coefficient_or_K_RS * math.sqrt(tmax - tmin) * temp_1
 
 
 
@@ -440,7 +444,7 @@ def net_solar_or_shortwave_radiation(
 
 
 
-class Actual_Vapour_Pressure:
+class ActualVapourPressure:
    
     # init method or constructor 
     def __init__(self,
@@ -678,8 +682,8 @@ def net_longwave_radiation(
    
     Returns
     -------
-    Net longwave radiation : float
-        Net longwave radiation in MJ / m**2 /day
+    net_longwave_radiation : float
+        net longwave radiation in MJ / m**2 /day
     """
 
     temp_1 = STEFAN_BOLTZMANN_CONSTANT * (((tmax_kelvin**4) + (tmin_kelvin**4)) / 2 )
@@ -705,8 +709,8 @@ def net_radiation_at_the_crop_surface(
         ----------
 
         net_solar_or_shortwave_radiation : float
-            Net solar or shortwave radiation in MJ / m**2 /day
-        Net longwave radiation : float
+            net solar or shortwave radiation in MJ / m**2 /day
+        net_longwave_radiation : float
             Net longwave radiation in MJ / m**2 /day
 
         Returns
@@ -722,7 +726,7 @@ def net_radiation_at_the_crop_surface(
 
 
 
-class Soil_heat_flux_density :
+class SoilHeatFluxDensity :
    
     # init method or constructor 
     def __init__(
@@ -814,16 +818,16 @@ class Soil_heat_flux_density :
     calculate Soil_heat_flux_density with Effective soil depth - eq 41 FAO56
     ----------
     mean_air_temperature_of_previous_month : float 
-        Mean air temperature of previous month in celsius
+        mean air temperature of previous month in celsius
     mean_air_temperature_of_next_month : float
-        Mean air temperature of next month in celsius
+        mean air temperature of next month in celsius
     mean_air_temperature_of_current_month : float
-        Mean air temperature of current month in celsius
+        mean air temperature of current month in celsius
         
     Returns
     -------
-    Soil_heat_flux_density : float
-        Soil heat flux density in MJ / m**2 /day
+    soil_heat_flux_density : float
+        soil heat flux density in MJ / m**2 /day
     """
 
         if mean_air_temperature_of_current_month == None :
@@ -883,8 +887,153 @@ def wind_speed_at_2m_above_ground_surface(
             
     Returns
     -------
-    Wind speed at 2m above ground surface : float
-        Wind speed at 2m above ground surface in meter / second
+    wind_speed_at_2m_above_ground_surface : float
+        wind speed at 2m above ground surface in meter / second
     """
         
     return measured_wind_speed * (4.87 / (math.log((67.8 *altitude_at_which_wind_speed_is_measured) - 5.42)))
+
+
+
+def available_evaporable_water(
+    e_a : float,
+    is_in_fisrt_step : bool,
+    infiltration : float,
+    initial_available_evaporable_water : float = None,
+    available_evaporable_water_in_previous_step : float = None
+) -> float:
+
+    """
+    Description
+    -----------
+    calculate Available_water With FC and PWP 
+    ----------
+    e_a : float
+        evaporation_noncovered_areas in mm
+    is_in_fisrt_step : bool
+        Is_in_fisrt_step in boolean - True if we are on the first day, False if we are not on the first day
+    infiltration : float
+        infiltration in mm
+    initial_available_evaporable_water : float
+        initial available evaporable water in mm - If we are on the first day, we must enter a hypothetical value
+    available_evaporable_water_in_previous_step : float
+        available evaporable water in previous step in mm
+    
+
+    Returns
+    -------
+    available_evaporable_water : float
+        available evaporable water in mm
+    
+    """
+    if is_in_fisrt_step is True:
+        ae = initial_available_evaporable_water
+    else:
+        ae = available_evaporable_water_in_previous_step
+    
+    
+
+    return (0.5 * infiltration) + ae - e_a
+
+
+
+def available_water(
+    permanent_wilting_point_wet : float,
+    field_capacity_wet : float,
+    soil_depth : float
+) -> float:
+
+    """
+    Description
+    -----------
+    calculate Available_water With FC and PWP 
+    ----------
+    permanent_wilting_point_wet : float
+        permanent wilting point wet in percent(volumetric)
+    field_capacity_wet : float
+        field capacity wet in percent(volumetric)
+    soil_depth : float
+        soil depth in mm
+   
+    Returns
+    -------
+    available_water : float
+        available water in No units
+    
+    """
+    fc = field_capacity_wet * soil_depth
+    pwp = permanent_wilting_point_wet * soil_depth
+
+    return (fc - pwp) / 100
+
+
+
+def moisture_reduction_function(
+    soil_wetness_in_previous_step : float,
+    permanent_wilting_point_wet : float,
+    field_capacity_wet : float,
+    soil_depth : float
+) -> float:
+    
+    """
+    Description
+    -----------
+    calculate moisture reduction function With FC and PWP and SW(t-1) - eq 2 in E:\Term2\payan_name\Modules\Evapotranspiration\Real.docx
+    ----------
+    soil_wetness_in_previous_step : float
+        soil wetness in previous step in percent(volumetric)
+    permanent_wilting_point_wet : float
+        permanent wilting point wet in percent(volumetric)
+    field_capacity_wet : float
+        field capacity wet in percent(volumetric)
+    soil_depth : float
+        soil_depth in mm
+    Returns
+    -------
+    moisture_reduction_function : float
+        moisture reduction function in No units
+    """
+    
+    fc = (field_capacity_wet / 100) * soil_depth
+    pwp = (permanent_wilting_point_wet / 100) * soil_depth
+
+    
+    return (soil_wetness_in_previous_step - pwp) / (fc - pwp)
+
+
+
+def ratio_of_actual_evaporable_water_to_total_evaporable_water(
+    is_in_fisrt_step : bool,
+    available_water : float,
+    available_evaporable_water : float,
+    initial_available_evaporable_water : float = None
+) -> float:
+    
+    """
+    Description
+    -----------
+    calculate ratio of actual evaporable water to total evaporable water - eq 5 in E:\Term2\payan_name\Modules\Evapotranspiration\Real.docx
+    ----------
+    is_in_fisrt_step : bool
+        Is_in_fisrt_step in boolean - True if we are on the first day, False if we are not on the first day
+    available_water : float
+        available water in No units
+    available_evaporable_water : float
+        available evaporable water in mm
+    initial_available_evaporable_water : float
+        initial available evaporable water in mm - If we are on the first day, we must enter a hypothetical value
+   
+    Returns
+    -------
+    ratio_of_actual_evaporable_water_to_total_evaporable_water : float
+        ratio_of_actual_evaporable_water_to_total_evaporable_water in No units
+    """
+    if Is_in_fisrt_step is True : 
+        ae = initial_available_evaporable_water
+    else:
+        ae = available_evaporable_water
+        
+    
+    aw = available_water
+
+    return ae / aw
