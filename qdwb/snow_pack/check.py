@@ -18,3 +18,14 @@ def check_maximum_temperature(
         raise ValueError(
             f'The daily maximum temperature must be above the freezing point (0°c) : {tmax}'
         )
+
+
+
+def check_greater_than(
+    a: float,
+    a_name: str,
+    b: float,
+    b_name: str,
+) -> NoReturn:
+    if a > b:
+        raise ValueError(f"{a_name} is greater than {b_name}!")

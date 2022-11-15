@@ -200,8 +200,8 @@ def saturation_vapour_pressure_with_temperature(
 
 
 def total_saturation_vapour_pressure(
-    Saturated_vapor_pressure_at_maximum_temperature : float,
-    Saturated_vapor_pressure_at_minimum_temperature : float
+    saturated_vapor_pressure_at_maximum_temperature : float,
+    saturated_vapor_pressure_at_minimum_temperature : float
 ) -> float:
     
     """
@@ -210,10 +210,10 @@ def total_saturation_vapour_pressure(
     calculate Total Saturation Vapour Pressure With max and min Temperature - eq 12 FAO56
     ----------
 
-    Saturated_vapor_pressure_at_maximum_temperature : float
-        Saturated_vapor_pressure_at_maximum_temperature in kilo pascal
-    Saturated_vapor_pressure_at_minimum_temperature : float
-        Saturated_vapor_pressure_at_minimum_temperature  in kilo pascal
+    saturated_vapor_pressure_at_maximum_temperature : float
+        saturated_vapor_pressure_at_maximum_temperature in kilo pascal
+    saturated_vapor_pressure_at_minimum_temperature : float
+        saturated_vapor_pressure_at_minimum_temperature  in kilo pascal
 
     Returns
     -------
