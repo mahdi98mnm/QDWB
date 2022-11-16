@@ -8,19 +8,19 @@ class interception :
     def __init__(self,
         type_of_basin_canopy : str,
         precipitation : float,
-        growing_season : bool
+        is_growing_season : bool
     ):
 
         self.type_of_basin_canopy = type_of_basin_canopy
         self.precipitation = precipitation
-        self.growing_season = growing_season
+        self.is_growing_season = is_growing_season
 
 
 
     def bucket(
         type_of_basin_canopy : str,
         precipitation : float,
-        growing_season : bool
+        is_growing_season : bool
     )-> float :
     
         """
@@ -37,8 +37,8 @@ class interception :
         precipitation : float
             precipitation : zero or postive value in mm
 
-        growing_season : bool
-            growing_season include :  [True : 'growing' , False : 'none growing']
+        is_growing_season : bool
+            is_growing_season include :  [True : 'growing' , False : 'none growing']
 
         Returns
         -------
@@ -50,10 +50,10 @@ class interception :
         check_precipitation(precipitation = precipitation)
     
 
-        if (type_of_basin_canopy == 'Forest&Mixed') and (growing_season == True)  :
+        if (type_of_basin_canopy == 'Forest&Mixed') and (is_growing_season == True)  :
             interception = 0.06 * precipitation
             
-        elif (type_of_basin_canopy == 'Forest&Mixed') and (growing_season == False) :
+        elif (type_of_basin_canopy == 'Forest&Mixed') and (is_growing_season == False) :
             interception = 0.03 * precipitation
             
         elif type_of_basin_canopy == 'Evergreen_Forest' :
