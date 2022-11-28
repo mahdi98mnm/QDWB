@@ -1,6 +1,7 @@
 from typing import List, Dict, Tuple, Set, Optional, Union, Any, NoReturn
 from check import *
 from global_variable import *
+from datetime import date
 
 class ReferenceEvapotranspiration :
     
